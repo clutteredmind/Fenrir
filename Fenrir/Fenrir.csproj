@@ -39,6 +39,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Fenrir.cs" />
+    <Compile Include="FenrirObject.cs" />
     <Compile Include="FenrirProgram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
