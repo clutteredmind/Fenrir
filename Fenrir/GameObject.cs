@@ -9,7 +9,10 @@ namespace Fenrir
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
 
-    public class FenrirObject
+    /// <summary>
+    /// The base class for all objects in the game
+    /// </summary>
+    public class GameObject
     {
         /// <summary>
         /// The position of this object
@@ -25,7 +28,7 @@ namespace Fenrir
         /// Creates a new FenrirObject with the specified texture
         /// </summary>
         /// <param name="texture">The texture that the object should use</param>
-        public FenrirObject(Texture2D texture)
+        public GameObject(Texture2D texture)
         {
             Texture = texture;
         }
@@ -43,7 +46,7 @@ namespace Fenrir
         /// </summary>
         /// <param name="otherObject">The other object to check for a collision</param>
         /// <returns>True if the two objects' rectangles overlap, otherwise false</returns>
-        public bool HasCollidedWith(FenrirObject otherObject)
+        public bool HasCollidedWith(GameObject otherObject)
         {
             return ObjectRectangle.Intersects(otherObject.ObjectRectangle);
         }
