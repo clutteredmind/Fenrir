@@ -140,6 +140,88 @@ namespace Fenrir
             }
             paddle.Position = newPaddlePosition;
 
+            // move the ball
+            ball.Position += ball.Direction * ball.Speed;
+            // bounce if we hit the paddle
+            if (ball.HasCollidedWith(paddle))
+            {
+                ball.Direction = new Vector2(ball.Direction.X, ball.Direction.Y * -1);
+                // if the ball hit the left or right fourth of the paddle, also reverse X direction
+                if (ball.Position.X + ball.Texture.Width / 2f >= paddle.Position.X &&
+                   ball.Position.X + ball.Texture.Width / 2f <= paddle.Position.X + paddle.Texture.Width / 4f &&
+                   ball.Direction.X == 1)
+                {
+                    ball.Direction = new Vector2(ball.Direction.X * -1, ball.Direction.Y);
+                }
+                if (ball.Position.X + ball.Texture.Width / 2f >= (paddle.Position.X + paddle.Texture.Width) - paddle.Texture.Width / 4f &&
+                   ball.Position.X + ball.Texture.Width / 2f <= paddle.Position.X + paddle.Texture.Width &&
+                   ball.Direction.X == -1)
+                {
+                    ball.Direction = new Vector2(ball.Direction.X * -1, ball.Direction.Y);
+                }
+                // move the ball outside the paddle, in case it got more that one pixel into it
+                ball.Position = new Vector2(ball.Position.X, paddle.Position.Y - ball.Texture.Height);
+            }
+            // bounce if we hit the top, left, or right wall
+            if (ball.Position.X < 0)
+            {
+                ball.Position = new Vector2(0, ball.Position.Y);
+                ball.Direction = new Vector2(ball.Direction.X * -1, ball.Direction.Y);
+            }
+            if (ball.Position.Y < 0)
+            {
+                ball.Position = new Vector2(ball.Position.X, 0);
+                ball.Direction = new Vector2(ball.Direction.X, ball.Direction.Y * -1);
+            }
+            if (ball.Position.X + ball.Texture.Width > screenBounds.Width)
+            {
+                ball.Position = new Vector2(ball.Position.X - ball.Texture.Width, ball.Position.Y);
+                ball.Direction = new Vector2(ball.Direction.X * -1, ball.Direction.Y);
+            }
+            // reset the ball when it hits the bottom of the play field
+            if (ball.Position.Y + ball.Texture.Height > screenBounds.Height)
+            {
+                ball.Direction = new Vector2(1, -1);
+                ball.Position = new Vector2(paddle.Position.X + ((paddle.Texture.Width - ball.Texture.Width) / 2f), paddle.Position.Y - ball.Texture.Height - 1);
+            }
+
+            // bounce if we hit a brick
+            bool collision = false;
+            foreach (var brick in bricks)
+            {
+                if (brick.InPlay && ball.HasCollidedWith(brick) && !collision)
+                {
+                    collision = true;
+                    brick.InPlay = false;
+                    // for vertical collision (top or bottom of brick) invert Y motion
+                    if (ball.ObjectRectangle.Intersects(new Rectangle((int)brick.Position.X, (int)brick.Position.Y, brick.Texture.Width, 0)))
+                    {
+                        // top
+                        ball.Position = new Vector2(ball.Position.X, brick.Position.Y - ball.Texture.Height);
+                        ball.Direction = new Vector2(ball.Direction.X, ball.Direction.Y * -1);
+                    }
+                    else if (ball.ObjectRectangle.Intersects(new Rectangle((int)brick.Position.X, (int)brick.Position.Y + brick.Texture.Height, brick.Texture.Width, 0)))
+                    {
+                        // bottom
+                        ball.Position = new Vector2(ball.Position.X, brick.Position.Y + brick.Texture.Height);
+                        ball.Direction = new Vector2(ball.Direction.X, ball.Direction.Y * -1);
+                    }
+                    // for horizontal collision (left or right side of brick) invert X motion
+                    else if (ball.ObjectRectangle.Intersects(new Rectangle((int)brick.Position.X, (int)brick.Position.Y, 0, brick.Texture.Height)))
+                    {
+                        // left
+                        ball.Position = new Vector2(brick.Position.X - ball.Texture.Width, ball.Position.Y);
+                        ball.Direction = new Vector2(ball.Direction.X * -1, ball.Direction.Y);
+                    }
+                    else if (ball.ObjectRectangle.Intersects(new Rectangle((int)brick.Position.X + brick.Texture.Width, (int)brick.Position.Y, 0, brick.Texture.Height)))
+                    {
+                        // right
+                        ball.Position = new Vector2(brick.Position.X + brick.Texture.Width, ball.Position.Y);
+                        ball.Direction = new Vector2(ball.Direction.X * -1, ball.Direction.Y);
+                    }
+                }
+            }
+
             base.Update(gameTime);
         }
 
@@ -153,11 +235,13 @@ namespace Fenrir
             GraphicsDevice.Clear(Color.Black);
 
             spriteBatch.Begin();
+
             // draw the bricks
             for (int columnIndex = 0; columnIndex < BrickColumnCount; ++columnIndex)
             {
                 for (int rowIndex = 0; rowIndex < BrickRowCount; ++rowIndex)
                 {
+                    // only draw the brick if it's still in play
                     if (bricks[columnIndex, rowIndex].InPlay)
                     {
                         spriteBatch.Draw(bricks[columnIndex, rowIndex].Texture, bricks[columnIndex, rowIndex].Position, rowColors[rowIndex]);
@@ -168,6 +252,7 @@ namespace Fenrir
             spriteBatch.Draw(ball.Texture, ball.Position, Color.White);
             // draw the paddle
             spriteBatch.Draw(paddle.Texture, paddle.Position, Color.White);
+
             spriteBatch.End();
 
             base.Draw(gameTime);
