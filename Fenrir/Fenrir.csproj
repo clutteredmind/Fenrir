@@ -41,7 +41,7 @@
     <Compile Include="Ball.cs" />
     <Compile Include="Brick.cs" />
     <Compile Include="Fenrir.cs" />
-    <Compile Include="FenrirObject.cs" />
+    <Compile Include="GameObject.cs" />
     <Compile Include="FenrirProgram.cs" />
     <Compile Include="Paddle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

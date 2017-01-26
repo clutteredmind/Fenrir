@@ -11,7 +11,7 @@ namespace Fenrir
     /// <summary>
     /// Represents a single brick in the game
     /// </summary>
-    public class Brick : FenrirObject
+    public class Brick : GameObject
     {
         /// <summary>
         /// Creates a new Brick

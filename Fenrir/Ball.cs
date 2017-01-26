@@ -12,7 +12,7 @@ namespace Fenrir
     /// <summary>
     /// The game's ball
     /// </summary>
-    public class Ball : FenrirObject
+    public class Ball : GameObject
     {
         /// <summary>
         /// Creates a new Paddle
