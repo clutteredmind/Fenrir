@@ -1,21 +1,36 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+﻿//-----------------------------------------------------------------------
+// <copyright file = "Fenrir.cs" company = "Me!">
+//     Copyright (c) Me!  All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
 
 namespace Fenrir
 {
-    /// <summary>
-    /// This is the main type for your game.
-    /// </summary>
+    using Microsoft.Xna.Framework;
+    using Microsoft.Xna.Framework.Graphics;
+    using Microsoft.Xna.Framework.Input;
+
     public class Fenrir : Game
     {
+        /// <summary>
+        /// Our graphics device manager
+        /// </summary>
         GraphicsDeviceManager graphics;
+        /// <summary>
+        /// The size of the play field
+        /// </summary>
+        private Rectangle screenBounds;
+        /// <summary>
+        /// Our SpriteBatch for managing all of our many sprites
+        /// </summary>
         SpriteBatch spriteBatch;
 
         public Fenrir()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            // get and save the bounds of the screen
+            screenBounds = new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
         }
 
         /// <summary>
@@ -26,8 +41,6 @@ namespace Fenrir
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
             base.Initialize();
         }
 
@@ -39,8 +52,6 @@ namespace Fenrir
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // TODO: use this.Content to load your game content here
         }
 
         /// <summary>
@@ -49,7 +60,8 @@ namespace Fenrir
         /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
+            // Unload non-ContentManager content
+            spriteBatch.Dispose();
         }
 
         /// <summary>
@@ -59,10 +71,11 @@ namespace Fenrir
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            // exit the game if the gamepad's back button is pressed or if esc is pressed
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            {
                 Exit();
-
-            // TODO: Add your update logic here
+            }
 
             base.Update(gameTime);
         }
@@ -73,9 +86,7 @@ namespace Fenrir
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            // TODO: Add your drawing code here
+            GraphicsDevice.Clear(Color.Black);
 
             base.Draw(gameTime);
         }
